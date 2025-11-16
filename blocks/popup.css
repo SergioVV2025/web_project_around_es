@@ -26,6 +26,12 @@
   margin-top: 48px;
 }
 
+.popup__button:disabled {
+  color: rgba(0, 0, 0, 1);
+  border: 1px solid rgba(0, 0, 0, 1);
+  background: #fff;
+}
+
 .popup__button:hover {
   background: rgba(0, 0, 0, 0.8);
   cursor: pointer;
@@ -78,6 +84,22 @@
 
 .popup__input:last-of-type {
   margin-bottom: 0;
+}
+
+.popup__input_error {
+  border-bottom: 1px solid rgba(255, 0, 0, 1);
+}
+
+.popup__error {
+  display: none;
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 1;
+  color: rgba(255, 0, 0, 1);
+}
+
+.popup__error_active {
+  display: block;
 }
 
 .popup__title {

@@ -41,10 +41,7 @@ const cardTemplate = document
   .querySelector("#card-template")
   .content.querySelector(".card");
 
-function getCardElement(
-  name = "Sin Título",
-  link = "./images/placeholder.jpg"
-) {
+function getCardElement(name, link) {
   const cardElement = cardTemplate.cloneNode(true);
 
   const cardTitle = cardElement.querySelector(".card__title");
@@ -121,6 +118,7 @@ function fillProfileForm() {
 
 const editPopupClose = editPopup.querySelector(".popup__close");
 editPopupClose.addEventListener("click", function () {
+  cleanInputsEditProfile();
   closeModal(editPopup);
 });
 
@@ -138,6 +136,11 @@ function handleProfileFormSubmit(evt) {
 
   document.querySelector(".profile__title").textContent = nameInput;
   document.querySelector(".profile__description").textContent = jobInput;
+
+  /*----- Deshabilitar botón "Guardar" -----*/
+  const profileSubmitButton = saveProfileForm.querySelector(".popup__button");
+  profileSubmitButton.disabled = true;
+
   closeModal(editPopup);
 }
 
@@ -152,6 +155,7 @@ profileAddButton.addEventListener("click", function () {
 
 const addPopupClose = newCardPopup.querySelector(".popup__close");
 addPopupClose.addEventListener("click", function () {
+  cleanInputsNewCard();
   closeModal(newCardPopup);
 });
 
@@ -168,6 +172,162 @@ function handleCardFormSubmit(evt) {
   const newCard = getCardElement(nameInput, linkInput);
   cardsList.prepend(newCard);
 
+  /*--- Deshabilitar botón "Crear" y limpiar formulario ---*/
+  const newCardSubmitButton = newCardForm.querySelector(".popup__button");
+  newCardSubmitButton.disabled = true;
   newCardForm.reset();
+
   closeModal(newCardPopup);
+}
+
+/*---------- Validar Campos Profile----------*/
+
+const profileForm = document.forms["edit-profile-form"];
+const profileInputs = profileForm.querySelectorAll(".popup__input");
+const profileSubmitButton = profileForm.querySelector(".popup__button");
+
+const showProfileInputError = (inputElement, errorMessage) => {
+  const errorElement = profileForm.querySelector(
+    `.popup__error_${inputElement.name}`
+  );
+  inputElement.classList.add("popup__input_error");
+  errorElement.textContent = errorMessage;
+  errorElement.classList.add("popup__error_active");
+};
+
+const hideProfileInputError = (inputElement) => {
+  const errorElement = profileForm.querySelector(
+    `.popup__error_${inputElement.name}`
+  );
+  inputElement.classList.remove("popup__input_error");
+  errorElement.textContent = "";
+  errorElement.classList.remove("popup__error_active");
+};
+
+function toggleProfileButtonState() {
+  const allValid = [...profileInputs].every((input) => input.validity.valid);
+  profileSubmitButton.disabled = !allValid;
+}
+
+profileInputs.forEach(function (input) {
+  input.addEventListener("input", function () {
+    if (!input.validity.valid) {
+      showProfileInputError(input, input.validationMessage);
+    } else {
+      hideProfileInputError(input);
+    }
+    toggleProfileButtonState();
+  });
+});
+
+/*---------- Validar Campos Card ----------*/
+
+const cardForm = document.forms["new-card-form"];
+const cardInputs = cardForm.querySelectorAll(".popup__input");
+const cardSubmitButton = cardForm.querySelector(".popup__button");
+
+const showCardInputError = (inputElement, errorMessage) => {
+  const errorElement = cardForm.querySelector(
+    `.popup__error_${inputElement.name}`
+  );
+  inputElement.classList.add("popup__input_error");
+  errorElement.textContent = errorMessage;
+  errorElement.classList.add("popup__error_active");
+};
+
+const hideCardInputError = (inputElement) => {
+  const errorElement = cardForm.querySelector(
+    `.popup__error_${inputElement.name}`
+  );
+  inputElement.classList.remove("popup__input_error");
+  errorElement.textContent = "";
+  errorElement.classList.remove("popup__error_active");
+};
+
+function toggleCardButtonState() {
+  const allValid = Array.from(cardInputs).every(
+    (input) => input.validity.valid
+  );
+  cardSubmitButton.disabled = !allValid;
+}
+
+cardInputs.forEach(function (input) {
+  input.addEventListener("input", function () {
+    if (!input.validity.valid) {
+      showCardInputError(input, input.validationMessage);
+    } else {
+      hideCardInputError(input);
+    }
+    toggleCardButtonState();
+  });
+});
+
+/* Si se cierra el formulario cuando está marcando errores, los quitamos */
+
+/*---------- Edit Profile ---------*/
+
+function cleanInputsEditProfile() {
+  const errorNameOutput = document.querySelector(".popup__error_name");
+  errorNameOutput.classList.remove("popup__error_active");
+  const errorDescriptionOutput = document.querySelector(
+    ".popup__error_description"
+  );
+  errorDescriptionOutput.classList.remove("popup__error_active");
+  const popupInputName = document.querySelector(".popup__input_type_name");
+  popupInputName.classList.remove("popup__input_error");
+  const popupInputDescription = document.querySelector(
+    ".popup__input_type_description"
+  );
+  popupInputDescription.classList.remove("popup__input_error");
+}
+
+/*---------- New Card ----------*/
+
+function cleanInputsNewCard() {
+  const errorPlaceOutput = document.querySelector(".popup__error_place-name");
+  errorPlaceOutput.classList.remove("popup__error_active");
+  const errorLinkOutput = document.querySelector(".popup__error_link");
+  errorLinkOutput.classList.remove("popup__error_active");
+  const popupInputPlace = document.querySelector(
+    ".popup__input_type_card-name"
+  );
+  popupInputPlace.classList.remove("popup__input_error");
+  const popupInputLink = document.querySelector(".popup__input_type_url");
+  popupInputLink.classList.remove("popup__input_error");
+
+  cardForm["place-name"].value = "";
+  cardForm["link"].value = "";
+}
+
+/*--------------------------------------------------------------*/
+
+/*---------- Overlay ClosePopup ----------*/
+
+editPopup.addEventListener("click", closePopupOnOverlay);
+newCardPopup.addEventListener("click", closePopupOnOverlay);
+
+function closePopupOnOverlay(event) {
+  if (event.target.id === "edit-popup") {
+    cleanInputsEditProfile();
+    closeModal(editPopup);
+  } else if (event.target.id === "new-card-popup") {
+    cleanInputsNewCard();
+    closeModal(newCardPopup);
+  }
+}
+
+/*---------- Esc ClosePopUp ----------*/
+
+document.addEventListener("keydown", closeOnEscKey);
+
+function closeOnEscKey(event) {
+  if (event.key === "Escape") {
+    if (editPopup.classList.contains("popup_is-opened")) {
+      cleanInputsEditProfile();
+      closeModal(editPopup);
+    } else if (newCardPopup.classList.contains("popup_is-opened")) {
+      cleanInputsNewCard();
+      closeModal(newCardPopup);
+    }
+  }
 }
