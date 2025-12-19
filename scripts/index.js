@@ -1,4 +1,17 @@
-initialCards = [
+import Card from "./Card.js";
+import FormValidator from "./FormValidator.js";
+import {
+  openModal,
+  closeModal,
+  closePopupOnOverlay,
+  closeOnEscKey,
+  cleanInputsEditProfile,
+  cleanInputsNewCard,
+} from "./utils.js";
+
+/*---------- Initial Cards Data ----------*/
+
+let initialCards = [
   {
     name: "Valle de Yosemite",
     link: "https://practicum-content.s3.us-west-1.amazonaws.com/web-code/moved_yosemite.jpg",
@@ -27,70 +40,21 @@ initialCards = [
 
 /*---------- Modals ----------*/
 
-function openModal(modal) {
-  modal.classList.add("popup_is-opened");
-}
-
-function closeModal(modal) {
-  modal.classList.remove("popup_is-opened");
-}
+// importadas y usadas en utils.js
 
 /*---------- Create Card ----------*/
 
-const cardTemplate = document
-  .querySelector("#card-template")
-  .content.querySelector(".card");
-
-function getCardElement(name, link) {
-  const cardElement = cardTemplate.cloneNode(true);
-
-  const cardTitle = cardElement.querySelector(".card__title");
-  cardTitle.textContent = name;
-  const cardImage = cardElement.querySelector(".card__image");
-  cardImage.src = link;
-  cardImage.alt = name;
-
-  cardImage.addEventListener("click", function () {
-    const imagePopup = document.querySelector("#image-popup");
-    openModal(imagePopup);
-
-    const popupImage = imagePopup.querySelector(".popup__image");
-    popupImage.src = link;
-    popupImage.alt = name;
-
-    const popupCaption = imagePopup.querySelector(".popup__caption");
-    popupCaption.textContent = name;
-
-    const imagePopupClose = imagePopup.querySelector(".popup__close");
-    imagePopupClose.addEventListener("click", function () {
-      closeModal(imagePopup);
-    });
-  });
-
-  const cardLikeButton = cardElement.querySelector(".card__like-button");
-  cardLikeButton.addEventListener("click", function (evt) {
-    evt.target.classList.toggle("card__like-button_is-active");
-  });
-
-  const cardDeleteButton = cardElement.querySelector(".card__delete-button");
-  cardDeleteButton.addEventListener("click", function () {
-    cardDeleteButton.closest(".card").remove();
-  });
-
-  return cardElement;
-}
+// Importada la clase Card al inicio del archivo
 
 /*---------- Initial Cards ----------*/
 
 const cardsList = document.querySelector(".cards__list");
 
-initialCards.forEach(function (card) {
-  renderCard(card.name, card.link, cardsList);
+initialCards.forEach((item) => {
+  const newCard = new Card(item, "#card-template");
+  const cardElement = newCard.generateCard();
+  cardsList.append(cardElement);
 });
-
-function renderCard(name, link, cardContainer) {
-  cardContainer.append(getCardElement(name, link));
-}
 
 /*---------- Edit Profile ---------*/
 
@@ -164,13 +128,14 @@ newCardForm.addEventListener("submit", handleCardFormSubmit);
 function handleCardFormSubmit(evt) {
   evt.preventDefault();
 
-  let nameInput = newCardForm.querySelector(
-    ".popup__input_type_card-name"
-  ).value;
-  let linkInput = newCardForm.querySelector(".popup__input_type_url").value;
+  const cardData = {
+    name: newCardForm.querySelector(".popup__input_type_card-name").value,
+    link: newCardForm.querySelector(".popup__input_type_url").value,
+  };
 
-  const newCard = getCardElement(nameInput, linkInput);
-  cardsList.prepend(newCard);
+  const newCard = new Card(cardData, "#card-template");
+  const cardElement = newCard.generateCard();
+  cardsList.prepend(cardElement);
 
   /*--- Deshabilitar botón "Crear" y limpiar formulario ---*/
   const newCardSubmitButton = newCardForm.querySelector(".popup__button");
@@ -180,154 +145,50 @@ function handleCardFormSubmit(evt) {
   closeModal(newCardPopup);
 }
 
-/*---------- Validar Campos Profile----------*/
+/*---------- Objeto config para validación ----------*/
 
-const profileForm = document.forms["edit-profile-form"];
-const profileInputs = profileForm.querySelectorAll(".popup__input");
-const profileSubmitButton = profileForm.querySelector(".popup__button");
-
-const showProfileInputError = (inputElement, errorMessage) => {
-  const errorElement = profileForm.querySelector(
-    `.popup__error_${inputElement.name}`
-  );
-  inputElement.classList.add("popup__input_error");
-  errorElement.textContent = errorMessage;
-  errorElement.classList.add("popup__error_active");
+const validationConfig = {
+  inputSelector: ".popup__input",
+  submitButtonSelector: ".popup__button",
+  inactiveButtonClass: "popup__button_disabled",
+  inputErrorClass: "popup__input_error",
+  errorClass: "popup__error_active",
 };
 
-const hideProfileInputError = (inputElement) => {
-  const errorElement = profileForm.querySelector(
-    `.popup__error_${inputElement.name}`
-  );
-  inputElement.classList.remove("popup__input_error");
-  errorElement.textContent = "";
-  errorElement.classList.remove("popup__error_active");
-};
+/*---------- Instanciar validadores ----------*/
+const profileFormValidator = new FormValidator(
+  validationConfig,
+  document.querySelector("#edit-profile-form")
+);
+const cardFormValidator = new FormValidator(
+  validationConfig,
+  document.querySelector("#new-card-form")
+);
 
-function toggleProfileButtonState() {
-  const allValid = [...profileInputs].every((input) => input.validity.valid);
-  profileSubmitButton.disabled = !allValid;
-}
-
-profileInputs.forEach(function (input) {
-  input.addEventListener("input", function () {
-    if (!input.validity.valid) {
-      showProfileInputError(input, input.validationMessage);
-    } else {
-      hideProfileInputError(input);
-    }
-    toggleProfileButtonState();
-  });
-});
-
-/*---------- Validar Campos Card ----------*/
-
-const cardForm = document.forms["new-card-form"];
-const cardInputs = cardForm.querySelectorAll(".popup__input");
-const cardSubmitButton = cardForm.querySelector(".popup__button");
-
-const showCardInputError = (inputElement, errorMessage) => {
-  const errorElement = cardForm.querySelector(
-    `.popup__error_${inputElement.name}`
-  );
-  inputElement.classList.add("popup__input_error");
-  errorElement.textContent = errorMessage;
-  errorElement.classList.add("popup__error_active");
-};
-
-const hideCardInputError = (inputElement) => {
-  const errorElement = cardForm.querySelector(
-    `.popup__error_${inputElement.name}`
-  );
-  inputElement.classList.remove("popup__input_error");
-  errorElement.textContent = "";
-  errorElement.classList.remove("popup__error_active");
-};
-
-function toggleCardButtonState() {
-  const allValid = Array.from(cardInputs).every(
-    (input) => input.validity.valid
-  );
-  cardSubmitButton.disabled = !allValid;
-}
-
-cardInputs.forEach(function (input) {
-  input.addEventListener("input", function () {
-    if (!input.validity.valid) {
-      showCardInputError(input, input.validationMessage);
-    } else {
-      hideCardInputError(input);
-    }
-    toggleCardButtonState();
-  });
-});
+// Habilitar validación
+profileFormValidator.enableValidation();
+cardFormValidator.enableValidation();
 
 /* Si se cierra el formulario cuando está marcando errores, los quitamos */
 
 /*---------- Edit Profile ---------*/
 
-function cleanInputsEditProfile() {
-  const errorNameOutput = document.querySelector(".popup__error_name");
-  errorNameOutput.classList.remove("popup__error_active");
-  const errorDescriptionOutput = document.querySelector(
-    ".popup__error_description"
-  );
-  errorDescriptionOutput.classList.remove("popup__error_active");
-  const popupInputName = document.querySelector(".popup__input_type_name");
-  popupInputName.classList.remove("popup__input_error");
-  const popupInputDescription = document.querySelector(
-    ".popup__input_type_description"
-  );
-  popupInputDescription.classList.remove("popup__input_error");
-}
+// IMPORTADA y USADA en utils.js
+
+/*--------------------------------------------------------------*/
 
 /*---------- New Card ----------*/
 
-function cleanInputsNewCard() {
-  const errorPlaceOutput = document.querySelector(".popup__error_place-name");
-  errorPlaceOutput.classList.remove("popup__error_active");
-  const errorLinkOutput = document.querySelector(".popup__error_link");
-  errorLinkOutput.classList.remove("popup__error_active");
-  const popupInputPlace = document.querySelector(
-    ".popup__input_type_card-name"
-  );
-  popupInputPlace.classList.remove("popup__input_error");
-  const popupInputLink = document.querySelector(".popup__input_type_url");
-  popupInputLink.classList.remove("popup__input_error");
-
-  cardForm["place-name"].value = "";
-  cardForm["link"].value = "";
-}
+// IMPORTADA y USADA en utils.js
 
 /*--------------------------------------------------------------*/
 
 /*---------- Overlay ClosePopup ----------*/
 
-editPopup.addEventListener("click", closePopupOnOverlay);
-newCardPopup.addEventListener("click", closePopupOnOverlay);
-
-function closePopupOnOverlay(event) {
-  if (event.target.id === "edit-popup") {
-    cleanInputsEditProfile();
-    closeModal(editPopup);
-  } else if (event.target.id === "new-card-popup") {
-    cleanInputsNewCard();
-    closeModal(newCardPopup);
-  }
-}
+//IMPORTADA y USADA en utils.js
 
 /*---------- Esc ClosePopUp ----------*/
 
-document.addEventListener("keydown", closeOnEscKey);
+//importada y usada en utils.js
 
-function closeOnEscKey(event) {
-  if (event.key === "Escape") {
-    if (editPopup.classList.contains("popup_is-opened")) {
-      cleanInputsEditProfile();
-      closeModal(editPopup);
-    } else if (newCardPopup.classList.contains("popup_is-opened")) {
-      cleanInputsNewCard();
-      closeModal(newCardPopup);
-    }
-  }
-}
+/*--------------------------------------------------------------*/
