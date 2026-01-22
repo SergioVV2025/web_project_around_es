@@ -9,16 +9,16 @@ class FormValidator {
     this._formElement = formElement;
 
     this._inputList = Array.from(
-      this._formElement.querySelectorAll(this._inputSelector)
+      this._formElement.querySelectorAll(this._inputSelector),
     );
     this._buttonElement = this._formElement.querySelector(
-      this._submitButtonSelector
+      this._submitButtonSelector,
     );
   }
 
   _showInputError(inputElement, errorMessage) {
     const errorElement = this._formElement.querySelector(
-      `.popup__error_${inputElement.name}`
+      `.popup__error_${inputElement.name}`,
     );
     inputElement.classList.add(this._inputErrorClass);
     errorElement.textContent = errorMessage;
@@ -27,7 +27,7 @@ class FormValidator {
 
   _hideInputError(inputElement) {
     const errorElement = this._formElement.querySelector(
-      `.popup__error_${inputElement.name}`
+      `.popup__error_${inputElement.name}`,
     );
     inputElement.classList.remove(this._inputErrorClass);
     errorElement.textContent = "";
