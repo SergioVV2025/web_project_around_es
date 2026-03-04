@@ -104,6 +104,9 @@ profileEditButton.addEventListener("click", function () {
 
 const saveProfileForm = document.querySelector("#edit-profile-form");
 function handleProfileFormSubmit(formData) {
+  const newProfileSubmitButton =
+    saveProfileForm.querySelector(".popup__button");
+  newProfileSubmitButton.textContent = "Guardando...";
   api
     .setUserInfo(formData.name, formData.description)
     .then((userInfo) => {
@@ -111,6 +114,7 @@ function handleProfileFormSubmit(formData) {
       title.textContent = userInfo.name;
       const description = document.querySelector(".profile__description");
       description.textContent = userInfo.about;
+      newProfileSubmitButton.textContent = "Guardar";
     })
     .catch((err) => {
       console.log(err);
