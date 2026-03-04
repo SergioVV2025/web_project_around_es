@@ -139,6 +139,7 @@ function handleCardFormSubmit(formData) {
     .then((card) => {
       section.addItem(card);
       newCardSubmitButton.disabled = true;
+      newCardSubmitButton.textContent = "Crear";
       saveCardForm.reset();
 
       newCardPopup.close();
