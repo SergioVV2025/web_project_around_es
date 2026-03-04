@@ -133,7 +133,6 @@ profileAddButton.addEventListener("click", () => {
 const saveCardForm = document.querySelector("#new-card-form");
 function handleCardFormSubmit(formData) {
   const newCardSubmitButton = saveCardForm.querySelector(".popup__button");
-  newCardSubmitButton.style.background = "transparent";
   newCardSubmitButton.textContent = "Creando...";
   api
     .addCard(formData["place-name"], formData.link)
