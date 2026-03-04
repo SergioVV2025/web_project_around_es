@@ -141,7 +141,7 @@ function handleCardFormSubmit(formData) {
       newCardSubmitButton.disabled = true;
       saveCardForm.reset();
 
-      newCardPopup.close();
+      // newCardPopup.close();
     })
     .catch((err) => {
       console.log(err);
