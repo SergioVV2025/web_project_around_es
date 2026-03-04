@@ -138,8 +138,8 @@ function handleCardFormSubmit(formData) {
     .addCard(formData["place-name"], formData.link)
     .then((card) => {
       section.addItem(card);
-      newCardSubmitButton.disabled = true;
       newCardSubmitButton.textContent = "Crear";
+      newCardSubmitButton.disabled = true;
       saveCardForm.reset();
 
       newCardPopup.close();
