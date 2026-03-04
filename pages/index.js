@@ -132,22 +132,20 @@ profileAddButton.addEventListener("click", () => {
 
 const saveCardForm = document.querySelector("#new-card-form");
 function handleCardFormSubmit(formData) {
+  const newCardSubmitButton = saveCardForm.querySelector(".popup__button");
+  newCardSubmitButton.textContent = "Creando...";
   api
     .addCard(formData["place-name"], formData.link)
     .then((card) => {
       section.addItem(card);
+      newCardSubmitButton.disabled = true;
+      saveCardForm.reset();
+
+      newCardPopup.close();
     })
     .catch((err) => {
       console.log(err);
     });
-
-  /*--- Deshabilitar botón "Crear" y limpiar formulario ---*/
-
-  const newCardSubmitButton = saveCardForm.querySelector(".popup__button");
-  newCardSubmitButton.disabled = true;
-  saveCardForm.reset();
-
-  newCardPopup.close();
 }
 
 //*---------- Objeto config para validación ----------*/
