@@ -139,6 +139,10 @@ function handleCardFormSubmit(formData) {
     .addCard(formData["place-name"], formData.link)
     .then((card) => {
       section.addItem(card);
+      newCardSubmitButton.disabled = true;
+      saveCardForm.reset();
+
+      newCardPopup.close();
     })
     .catch((err) => {
       console.log(err);
@@ -148,10 +152,6 @@ function handleCardFormSubmit(formData) {
     });
 
   /*--- Deshabilitar botón "Crear" y limpiar formulario ---*/
-  newCardSubmitButton.disabled = true;
-  saveCardForm.reset();
-
-  newCardPopup.close();
 }
 
 //*---------- Objeto config para validación ----------*/
