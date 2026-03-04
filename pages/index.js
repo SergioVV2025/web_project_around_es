@@ -114,7 +114,8 @@ function handleProfileFormSubmit(formData) {
       title.textContent = userInfo.name;
       const description = document.querySelector(".profile__description");
       description.textContent = userInfo.about;
-      newProfileSubmitButton.textContent = "Guardar";
+      // newProfileSubmitButton.textContent = "Guardar";
+      // editPopup.close();
     })
     .catch((err) => {
       console.log(err);
@@ -122,8 +123,6 @@ function handleProfileFormSubmit(formData) {
   /*----- Deshabilitar botón "Guardar" -----*/
   const profileSubmitButton = saveProfileForm.querySelector(".popup__button");
   profileSubmitButton.disabled = true;
-
-  editPopup.close();
 }
 
 /*---------- Popup Add Card ----------*/
