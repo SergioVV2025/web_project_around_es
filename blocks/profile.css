@@ -37,13 +37,38 @@
   max-width: 373px;
 }
 
+.profile__container {
+  background-image: url;
+  width: 120px;
+  height: 120px;
+  position: relative;
+  margin-right: 29px;
+}
+
 .profile__image {
+  position: absolute;
+  top: 0;
+  left: 0;
   width: 120px;
   height: 120px;
   border-radius: 50%;
   object-fit: cover;
-  background-position: center;
-  margin-right: 29px;
+  z-index: 0;
+}
+
+.profile__overlay {
+  display: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 120px;
+  height: 120px;
+  background: rgba(0, 0, 0, 0.8) url(../images/Vector.png) center no-repeat;
+  z-index: 1;
+}
+
+.profile__container:hover .profile__overlay {
+  display: block;
 }
 
 .profile__add-button {
