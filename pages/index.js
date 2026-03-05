@@ -114,15 +114,15 @@ function handleProfileFormSubmit(formData) {
       title.textContent = userInfo.name;
       const description = document.querySelector(".profile__description");
       description.textContent = userInfo.about;
-      // newProfileSubmitButton.textContent = "Guardar";
-      // editPopup.close();
+      newProfileSubmitButton.textContent = "Guardar";
+      newProfileSubmitButton.disabled = true;
+      saveProfileForm.reset();
+
+      editPopup.close();
     })
     .catch((err) => {
       console.log(err);
     });
-  /*----- Deshabilitar botón "Guardar" -----*/
-  const profileSubmitButton = saveProfileForm.querySelector(".popup__button");
-  profileSubmitButton.disabled = true;
 }
 
 /*---------- Popup Add Card ----------*/
@@ -203,13 +203,19 @@ avatarEdit.addEventListener("click", () => {
   newAvatarPopup.open();
 });
 
+const saveAvatarForm = document.querySelector("#new-avatar-form");
 function handleAvatarFormSubmit(formData) {
+  const newAvatarSubmitButton = saveAvatarForm.querySelector(".popup__button");
+  newAvatarSubmitButton.textContent = "Guardando...";
   api
     .setAvatar(formData.link)
     .then((userInfo) => {
       const profileImage = document.querySelector(".profile__image");
       profileImage.src = userInfo.avatar;
       profileImage.alt = "Avatar";
+      newAvatarSubmitButton.textContent = "Guardar";
+      newAvatarSubmitButton.disabled = true;
+      saveAvatarForm.reset();
       newAvatarPopup.close();
     })
     .catch((err) => {
