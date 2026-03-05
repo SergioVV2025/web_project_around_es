@@ -15,18 +15,14 @@ class Card {
     if (this._isLiked) {
       this._api
         .likeCard(this._id)
-        .then((card) => {
-          alert("You liked the card! - " + card.isLiked);
-        })
+        .then((card) => {})
         .catch((err) => {
           console.log(err);
         });
     } else {
       this._api
         .unLikeCard(this._id)
-        .then((card) => {
-          alert("You unliked the card! - " + card.isLiked);
-        })
+        .then((card) => {})
         .catch((err) => {
           console.log(err);
         });
