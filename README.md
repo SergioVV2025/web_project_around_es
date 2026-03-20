@@ -19,7 +19,20 @@ Incluye operaciones CRUD completas y actualización dinámica de la interfaz.
 
 📸 Preview
 
-(tus screenshots)
+### Main
+![Main](./images/aroundUS1.jpg)
+
+### Edit avatar
+![Edit avatar](./images/aroundUS_editAvatar.jpg)
+
+### Edit Profile
+![Edit profile](./images/aroundUS_editProf.jpg)
+
+### New Card
+![New Card](./images/aroundUS_newCard.jpg)
+
+### Delete confirmation
+![Del Confirmation](./images/aroundUS_delConf.jpg)
 
 ✨ Features
 
